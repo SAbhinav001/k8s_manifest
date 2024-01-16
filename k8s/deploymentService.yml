@@ -16,7 +16,7 @@ metadata:
 spec:
   containers:
     - name: todo-container
-      image: abhinav0101/my-app:${env.BUILD_NUMBER}
+      image: abhinav0101/my-app:${DOCKERTAG}
       ports:
         - containerPort: 8000
 
