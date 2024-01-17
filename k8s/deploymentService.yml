@@ -16,7 +16,7 @@ metadata:
 spec:
   containers:
     - name: todo-container
-      image: abhinav0101/my-app:44
+      image: abhinav0101/my-app:45
       ports:
         - containerPort: 8000
 
