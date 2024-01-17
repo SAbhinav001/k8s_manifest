@@ -1,0 +1,40 @@
+pipeline {
+    agent any
+    environment {
+        IMAGE = "my-app"
+        VERSION = "${DOCKERTAG}"
+        TOKEN = credentials('git_token')
+    }
+
+    stages {
+        stage('checkout SCM') {
+            steps {
+                script {
+                    git branch: 'main', url: 'https://github.com/SAbhinav001/k8s_manifest.git'
+                }
+            }
+        }
+        stage("update manifest")
+        {
+          steps {
+                    dir("k8s") {
+                        withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
+                            sh "sed -i 's|image:.*|image: ${USERNAME}/${IMAGE}:${VERSION}|' deploymentService.yml"
+                        }
+                    }
+                }
+        } 
+        stage('commit & push') {
+            steps{
+                dir("k8s"){
+                    sh "git config --global user.email abhinav.temp01@gmail.com"
+                    sh "git remote set-url origin https://${TOKEN}@github.com/SAbhinav001/k8s_manifest"
+                    sh "git add deploymentService.yml"
+                    sh 'git commit -m "manifest updated"'
+                    sh "git push origin main"
+
+                }
+            }
+        }
+    }
+}
